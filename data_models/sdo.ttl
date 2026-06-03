@@ -1,0 +1,1551 @@
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix iof-av: <https://spec.industrialontologies.org/ontology/core/meta/AnnotationVocabulary/> .
+@prefix lis: <http://rds.posccaesar.org/ontology/lis14/rdl/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sdo: <https://posccaesar.org/ontology/sdo/rdl/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+skos:definition a owl:AnnotationProperty ;
+    rdfs:label "definition"@en ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> .
+
+skos:note a owl:AnnotationProperty ;
+    rdfs:label "note"@en ;
+    rdfs:comment "A general note, for any purpose."@en ;
+    rdfs:isDefinedBy <http://www.w3.org/2004/02/skos/core> .
+
+sdo:ActivityBreakdownStructure a owl:Class ;
+    rdfs:label "Activity breakdown structure"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleBreakdownStructure ;
+    skos:example "Standard activity breakdown SAB (ISO 19008:2018)"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A breakdown structure that decomposes stages and phases in a project cycle."@en ;
+    iof-av:primitiveRationale "The semantics of activity breakdown structures, including detailed rules for decomposition or constraints on phases and stages, is beyond the scope of SDO. The class is introduced as a conceptual specialization of sdo:ScheduleBreakdownStructure to represent activity-level structuring."@en .
+
+sdo:ActualTimeDatum a owl:Class ;
+    rdfs:label "ActualTimeDatum"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty lis:quantifiesQuality ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:unionOf ( sdo:ActualFinishTime sdo:ActualStartTime ) ] ],
+        sdo:DateTimeDatum ;
+    skos:example "2025-10-29T08:00:00Z (actual start), 2025-10-29T16:00:00Z (actual finish)"@en ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "A date time datum that represents the observed value of a time-related quality."@en ;
+    iof-av:usageNote "Use this to record actual start or finish times of activities."@en .
+
+sdo:BaselineSchedule a owl:Class ;
+    rdfs:label "BaselineSchedule"@en ;
+    rdfs:comment "Serves as a reference for evaluating changes, deviations, and progress in subsequent schedules."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:Schedule ;
+    skos:example "A baseline schedule issued at the start of a construction phase, A baseline turnaround schedule for a refinery shutdown."@en ;
+    skos:scopeNote "It represents a static reference schedule and is not used to model dynamic or live updates."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A schedule issued at a specific point in time to which other schedules are compared"@en ;
+    iof-av:primitiveRationale "This class specializes sdo:Schedule. A precise account of what counts as an sdo:BaselineSchedule is beyond the scope of SDO."@en ;
+    iof-av:usageNote "A baseline schedule provides the basis for comparison between planned activities and actual results. It is typically frozen at a project milestone and used for performance tracking, delay analysis, and reporting. Multiple baseline schedules may exist for different phases or revisions of a project."@en .
+
+sdo:CalculatedTimeDatum a owl:Class ;
+    rdfs:label "CalculatedTimeDatum"@en ;
+    rdfs:comment "Can be computed based on scheduling logic or dependency analysis."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty lis:quantifiesQuality ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:unionOf ( sdo:EarlyStartTime sdo:EarlyFinishTime sdo:LateStartTime sdo:LateFinishTime ) ] ],
+        sdo:DateTimeDatum ;
+    skos:example "2025-10-30T09:00:00Z (early start), 2025-11-01T17:00:00Z (late finish)"@en ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "A date time datum that represents a derived value of a time-related quality."@en ;
+    iof-av:usageNote "Use this to represent time values derived from scheduling algorithms or dependency constraints."@en .
+
+sdo:CancelledActivity a owl:Class ;
+    rdfs:label "CancelledActivity"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleActivity ;
+    owl:disjointWith sdo:AlwaysOnScheduleActivity,
+        sdo:EarlyFinishActivity,
+        sdo:EarlyStartActivity,
+        sdo:LateFinishActivity,
+        sdo:LateStartActivity ;
+    iof-av:naturalLanguageDefinition "A schedule activity that has been formally removed from execution and will not be carried out."@en .
+
+sdo:ContinuousWorkPatternAssignment a owl:Class ;
+    rdfs:label "ContinuousWorkPatternAssignment"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Interval,
+        sdo:WorkPatternElement ;
+    skos:example "Standard 9–5 workdays from January 1 to March 31, night shift (22:00–06:00) from June 1 to August 31, 12-hour rotating shifts from October 1 to December 31."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A work pattern element that defines a continuous, non-repeating block of time."@en ;
+    iof-av:primitiveRationale "Although described as continuous and non-repeating, the ontology does not provide formal temporal constraints or repetition logic. A full account of continuity and exceptions is beyond scope."@en .
+
+sdo:ContinuousWorkPatternException a owl:Class ;
+    rdfs:label "ContinuousWorkPatternException"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Interval,
+        sdo:WorkPatternElement ;
+    skos:example "Override with vacation from July 10 to July 20, Assign training days from November 15 to November 17, sick leave from February 5 to February 9."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A work pattern element that defines a continuous, non-repeating block of time that overrides or modifies an existing continuous work pattern element."@en ;
+    iof-av:primitiveRationale "The concept of overriding or modifying patterns involves complex temporal reasoning and precedence rules, which are not fully formalized here."@en .
+
+sdo:CostBreakdownStructure a owl:Class ;
+    rdfs:label "Cost breakdown structure"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleBreakdownStructure ;
+    skos:example "Company A cost breakdown structure, project C cost breakdown structure"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A breakdown structure that decomposes the costs required to undertake a schedule activity."@en ;
+    iof-av:primitiveRationale "The semantics of cost breakdown structures, including detailed rules for cost allocation or constraints on cost categories, is beyond the scope of SDO. The class is introduced as a conceptual specialization of sdo:ScheduleBreakdownStructure to represent cost-level structuring."@en .
+
+sdo:DisciplineBreakdownStructure a owl:Class ;
+    rdfs:label "Discipline breakdown structure"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleBreakdownStructure ;
+    skos:example "Electrical technician, welder, planner, risk manager, cost personnel, project controller, electrical, structural, mechanical."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A breakdown structure that contains a hierarchical structuring of disciplines: domains of knowledge and expertise."@en ;
+    iof-av:primitiveRationale "The semantics of discipline breakdown structures, including detailed rules for classification of domains of knowledge or constraints on discipline hierarchies, is beyond the scope of SDO. The class is introduced as a conceptual specialization of sdo:ScheduleBreakdownStructure to represent discipline-level structuring."@en ;
+    iof-av:usageNote "In scheduling discipline is used to describe a human resource that is appointed to execute an activity."@en .
+
+sdo:FinishMilestone a owl:Class ;
+    rdfs:label "FinishMilestone"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:Milestone ;
+    skos:example "Project completion for building platform X, completion of a group of tasks"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "Milestone that signifies the completion of a schedule activity."@en ;
+    iof-av:primitiveRationale "While conceptually definable as a milestone marking completion, the ontology does not formalize all roles or relationships needed for a complete definition. The notion of completion is context-dependent."@en .
+
+sdo:FinishToFinish a owl:Class ;
+    rdfs:label "FinishToFinish"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleActivityLink ;
+    skos:example "“Install insulation” cannot finish until “Complete electrical wiring” has finished, “Finalize documentation” and “Close-out inspection” are scheduled to finish at the same time, “Pour concrete” and “Level surface” are planned so that leveling finishes only after pouring is complete."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A schedule activity link that specifies the relationship between two activities in which a successor activity cannot finish until a predecessor activity has finished."@en ;
+    iof-av:primitiveRationale "Specializes sdo:ScheduleActivityLink conceptually to represent a Finish-to-Finish dependency without introducing formal OWL axioms for link semantics. Detailed rules for enforcing finish-to-finish constraints, validating scheduling logic, or handling lag and lead times are beyond the scope of SDO. The class is introduced as a conceptual refinement to capture this specific dependency type."@en .
+
+sdo:FinishToStart a owl:Class ;
+    rdfs:label "FinishToStart"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleActivityLink ;
+    skos:example "Pour concrete must finish before Start curing process can begin, Complete structural framing must finish before Start roofing installation begins, Finalize design approval must finish before Start procurement of materials can commence."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A schedule activity link that specifies the relationship between two activities in which a successor activity cannot start until a predecessor activity has finished."@en ;
+    iof-av:primitiveRationale "Specializes sdo:ScheduleActivityLink conceptually to represent a Finish-to-Start dependency without introducing formal OWL axioms for link semantics. Detailed rules for enforcing finish-to-start constraints, validating scheduling logic, or handling lag and lead times are beyond the scope of SDO. The class is introduced as a conceptual refinement to capture this specific dependency type"@en ;
+    iof-av:usageNote "FinishToStart is used for the standard dependency where the successor activity begins only after the predecessor finishes. Common in sequential task planning"@en .
+
+sdo:Friday a owl:NamedIndividual,
+        sdo:DayOfWeek ;
+    rdfs:label "Friday"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    skos:exactMatch time:Friday .
+
+sdo:LiveSchedule a owl:Class ;
+    rdfs:label "LiveSchedule"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:Schedule ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A schedule that is continuously updated to reflect current status of planned and ongoing activities"@en ;
+    iof-av:primitiveRationale "Defined only by natural language meaning; no formal axioms beyond subclassing. A precise account of what counts as an sdo:LiveSchedule is beyond the scope of SDO."@en .
+
+sdo:Monday a owl:NamedIndividual,
+        sdo:DayOfWeek ;
+    rdfs:label "Monday"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    skos:exactMatch time:Monday .
+
+sdo:OrganizationalBreakdownStructure a owl:Class ;
+    rdfs:label "Organizational breakdown structure"@en ;
+    rdfs:comment "The organizational breakdown structure can include partnering or subcontracting. It is used to illustrate the relationship between schedules and the organizational units that will manage or perform the work activities."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:seeAlso "ISO 21511:2018, 3.5, modified"@en ;
+    rdfs:subClassOf sdo:ScheduleBreakdownStructure ;
+    skos:example "Functional breakdown structure, project based organizational breakdown structure"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A breakdown structure that provides a hierarchical structuring of organizational units that perform or manage the activities."@en ;
+    iof-av:primitiveRationale "The semantics of organizational breakdown structures, including detailed rules for structuring organizational units or constraints on relationships between organizations and activities, is beyond the scope of SDO. The class is introduced as a conceptual specialization of sdo:ScheduleBreakdownStructure to represent organizational-level structuring."@en .
+
+sdo:PhysicalBreakdownStructure a owl:Class ;
+    rdfs:label "Physical breakdown structure"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:seeAlso "ISO 21511:2018, 3.7"@en ;
+    rdfs:subClassOf sdo:ScheduleBreakdownStructure ;
+    skos:example "PBS in ISO 19008 Physical breakdown structure"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A breakdown structure that provides a hierarchical structuring of a product into its components."@en ;
+    iof-av:primitiveRationale "The semantics of physical breakdown structures, including detailed rules for product decomposition or constraints on component hierarchies, is beyond the scope of SDO. The class is introduced as a conceptual specialization of sdo:ScheduleBreakdownStructure to represent physical structuring of products."@en .
+
+sdo:PlannedTimeDatum a owl:Class ;
+    rdfs:label "PlannedTimeDatum"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty lis:quantifiesQuality ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:unionOf ( sdo:FinishNoEarlierThanTime sdo:FinishNoLaterThanTime sdo:StartNoEarlierThanTime sdo:StartNoLaterThanTime ) ] ],
+        sdo:DateTimeDatum ;
+    skos:example "2025-11-01T08:00:00Z (planned start), 2025-11-03T17:00:00Z (planned finish)"@en ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "A date time datum that represents the intended value of a time-related quality."@en ;
+    iof-av:usageNote "Use this to represent time constraints or targets defined during planning."@en .
+
+sdo:ResourceBreakdownStructure a owl:Class ;
+    rdfs:label "Resource breakdown structure"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:seeAlso "ISO 21506:2018, 3.70"@en ;
+    rdfs:subClassOf sdo:ScheduleBreakdownStructure ;
+    skos:example "COR in ISO 19008 Code of resource"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A breakdown structure that provides a hierarchical structuring of resources."@en ;
+    iof-av:primitiveRationale "The semantics of resource breakdown structures, including detailed rules for resource allocation or constraints on resource hierarchies, is beyond the scope of SDO. The class is introduced as a conceptual specialization of sdo:ScheduleBreakdownStructure to represent resource structuring in schedules."@en ;
+    iof-av:usageNote "Can be used for various resources, e.g., personnel, equipment, material or other assets."@en .
+
+sdo:ResourceInformation a owl:Class ;
+    rdfs:label "ResourceInformation"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:InformationObject,
+        sdo:ScheduleResource ;
+    skos:example "Technical Specifications Document needed for equipment installation, Regulatory Approval needed to initiate a drilling operation, Geotechnical Survey Report for foundation work"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A schedule resource need that requires information to perform a schedule activity."@en ;
+    iof-av:primitiveRationale "Conceptual specializations of sdo:ScheduleResource without formal OWL restrictions."@en ;
+    iof-av:usageNote "Represents non-physical resources that need to be available or referenced for an activity to be executed. It can be specifications, permits, reports, or other informational inputs, hence used to model dependencies on documentation, regulatory compliance, or technical data."@en .
+
+sdo:ResourceMaterial a owl:Class ;
+    rdfs:label "ResourceMaterial"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Compound,
+        sdo:ScheduleResource ;
+    skos:example "Reinforcing Steel, Interior Latex Paint, Asphalt Mix"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A schedule resource need that consists of material required to perform a schedule activity."@en ;
+    iof-av:primitiveRationale "The semantics of schedule resources that consist of materials, including detailed classifications or constraints on material types, is beyond the scope of SDO. The class is introduced as a conceptual specialization of sdo:ScheduleResource to represent material needs for activities, without formal OWL restrictions that would fully define its membership."@en ;
+    iof-av:usageNote "Represents physical substances or products consumed, installed, or otherwise needed for the execution of a schedule activity. Includes bulk materials, construction products, consumables, and other tangible inputs."@en .
+
+sdo:ResourcePeople a owl:Class ;
+    rdfs:label "ResourcePeople"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Person,
+        sdo:ScheduleResource ;
+    skos:example "Civil engineer, electrician, project manager"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A schedule resource need that requires a human resource"@en ;
+    iof-av:primitiveRationale "The semantics of human resources, including detailed classifications, roles, or constraints on personnel types, is beyond the scope of SDO. The class is introduced as a conceptual specialization of sdo:ScheduleResource to represent people needed for activities."@en .
+
+sdo:ResourceTool a owl:Class ;
+    rdfs:label "ResourceTool"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:InanimatePhysicalObject,
+        sdo:ScheduleResource ;
+    skos:example "A crane is needed to complete the lifting activity, a torque wrench used during equipment installation, a laser level used for alignment in structural work."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A schedule resource need that requires a tool resource"@en ;
+    iof-av:primitiveRationale "The semantics of tools and equipment, including detailed classifications, capabilities, or constraints on tool types, is beyond the scope of SDO. The class is introduced as a conceptual specialization of sdo:ScheduleResource to represent tool needs for activities."@en ;
+    iof-av:usageNote "Tools or devices used to support the execution of a schedule activity."@en .
+
+sdo:Saturday a owl:NamedIndividual,
+        sdo:DayOfWeek ;
+    rdfs:label "Saturday"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    skos:exactMatch time:Saturday .
+
+sdo:StartMilestone a owl:Class ;
+    rdfs:label "StartMilestone"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:Milestone ;
+    skos:example "Beginning of pouring concrete, beginning of welding."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "Milestone that signifies the beginning of a schedule activity."@en ;
+    iof-av:primitiveRationale "Similar to FinishMilestone, the semantics of start depend on contextual interpretation of schedule activities. A precise logical account of all start conditions is beyond scope."@en .
+
+sdo:StartToFinish a owl:Class ;
+    rdfs:label "StartToFinish"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleActivityLink ;
+    skos:example "Begin system testing has to start before Complete final documentation can finish, Start commissioning must occur before Finish operator training is allowed to conclude, Begin quality inspection has to start before Complete packaging process can finish."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A schedule activity link that specifies the relationship between two activities in which a successor activity cannot finish until a predecessor activity has started."@en ;
+    iof-av:primitiveRationale "Specializes sdo:ScheduleActivityLink conceptually to represent a Start-to-Finish dependency. Detailed rules for enforcing start-to-finish constraints, validating scheduling logic, or handling lag and lead times are beyond the scope of SDO. The class is introduced as a conceptual refinement to capture this specific dependency type."@en ;
+    iof-av:usageNote "StartToFinish is used for the dependency where the successor cannot finish until the predecessor has started. Typically applied in scenarios like handovers or phased transitions; detailed timing rules are outside the scope of SDO."@en .
+
+sdo:StartToStart a owl:Class ;
+    rdfs:label "StartToStart"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleActivityLink ;
+    skos:example "Begin excavation has to start before Start foundation pouring can begin, Start equipment installation has to occur before Start wiring activities commence, Begin software configuration has to start before Start system integration begins."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A schedule activity link that specifies the relationship between two activities in which a successor activity cannot start until a predecessor activity has started"@en ;
+    iof-av:primitiveRationale "Specializes sdo:ScheduleActivityLink conceptually to represent a Start-to-Start dependency. Detailed rules for enforcing start-to-start constraints, validating scheduling logic, or handling lag and lead times are beyond the scope of SDO. The class is introduced as a conceptual refinement to capture this specific dependency type."@en ;
+    iof-av:usageNote "StartToStart is used when two activities are to start in relation to each other, where the successor cannot start until the predecessor has started. Common in parallel or overlapping task planning."@en .
+
+sdo:Sunday a owl:NamedIndividual,
+        sdo:DayOfWeek ;
+    rdfs:label "Sunday"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    skos:exactMatch time:Sunday .
+
+sdo:Thursday a owl:NamedIndividual,
+        sdo:DayOfWeek ;
+    rdfs:label "Thursday"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    skos:exactMatch time:Thursday .
+
+sdo:Tuesday a owl:NamedIndividual,
+        sdo:DayOfWeek ;
+    rdfs:label "Tuesday"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    skos:exactMatch time:Tuesday .
+
+sdo:UnitDurationDatum a owl:Class ;
+    rdfs:label "UnitDurationDatum"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty lis:datumUOM ;
+            owl:someValuesFrom sdo:DurationUnit ],
+        [ a owl:Restriction ;
+            owl:onProperty sdo:datumValueDecimal ;
+            owl:someValuesFrom xsd:decimal ],
+        sdo:DurationDatum ;
+    skos:example "2.5 hours, 1 day"@en ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "A duration datum that quantifies duration using a decimal value and a duration unit."@en ;
+    iof-av:usageNote "Use this class when duration is expressed as a scalar quantity with a unit."@en .
+
+sdo:Wednesday a owl:NamedIndividual,
+        sdo:DayOfWeek ;
+    rdfs:label "Wednesday"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    skos:exactMatch time:Wednesday .
+
+sdo:WorkBreakdownStructure a owl:Class ;
+    rdfs:label "Work breakdown structure"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:seeAlso "ISO 21511:2018, 3.14"@en ;
+    rdfs:subClassOf sdo:ScheduleBreakdownStructure ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A breakdown structure that provides a a hierarchical structuring of the defined scope of the project or programme into progressively lower levels consisting of elements of work."@en ;
+    iof-av:primitiveRationale "The semantics of resource breakdown structures, including detailed rules for structuring different resource types or constraints on resource hierarchies, is beyond the scope of SDO. The class is introduced as a conceptual specialization of sdo:ScheduleBreakdownStructure to represent resource-level structuring."@en .
+
+sdo:XSDDurationDatum a owl:Class ;
+    rdfs:label "XSDDurationDatum"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:seeAlso "xsd:duration, ISO 8601"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty sdo:datumValueDuration ;
+            owl:someValuesFrom xsd:duration ],
+        sdo:DurationDatum ;
+    skos:example "“PT2H”, “P3DT4H”"@en ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "A duration datum that quantifies duration using an ISO 8601 duration literal and the standard XML schema Duration type (xsd:duration)."@en ;
+    iof-av:usageNote "Use this class when duration is expressed using the XML Schema xsd:duration datatype."@en .
+
+sdo:activityCancellationDate a owl:DatatypeProperty ;
+    rdfs:label "activityCancellationDate"@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTimeStamp ;
+    skos:example "Welding activity was cancelled 2002-05-30T09:30:10."@en ;
+    iof-av:naturalLanguageDefinition "To relate a time stamp for when a schedule activity is cancelled."@en .
+
+sdo:actualEffortPersonHours a owl:DatatypeProperty ;
+    rdfs:label "actualEffortPersonHours"@en ;
+    rdfs:comment "Shortcut property."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:effortPersonHours .
+
+sdo:actualFinish a owl:ObjectProperty ;
+    rdfs:label "actualFinish"@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasFinishTime ;
+    skos:example "The piping activity has reached completion on 12.11.2023."@en ;
+    iof-av:naturalLanguageDefinition "Finish point in time when a schedule activity in reality has finished."@en ;
+    iof-av:usageNote "Relation used to state that a schedule activity has an actual finish point in time."@en .
+
+sdo:actualFinishDateTime a owl:DatatypeProperty ;
+    rdfs:label "actualFinishDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:actualFinish."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:actualProgressPercent a owl:DatatypeProperty ;
+    rdfs:label "actualProgressPercent"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:progressPercent ;
+    skos:example "Actual progress for the field X development schedule is 33%."@en,
+        "Actual progress for the painting activity is 55%."@en ;
+    skos:note "ILAP uses 'CurrentProgress'."@en ;
+    iof-av:naturalLanguageDefinition "Actual measurable work proceeded towards completion."@en ;
+    iof-av:usageNote "Calculated based on estimated values (for example person hours, weight, cost)."@en,
+        "Expressed in % (value between 0-100)."@en .
+
+sdo:actualStart a owl:ObjectProperty ;
+    rdfs:label "actualStart"@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasStartTime ;
+    skos:example "The piping activity commenced on 01.11.2023."@en ;
+    iof-av:naturalLanguageDefinition "Start point in time when a schedule activity in reality has started."@en ;
+    iof-av:usageNote "Relation used to state that a schedule activity has an actual start point in time."@en .
+
+sdo:actualStartDateTime a owl:DatatypeProperty ;
+    rdfs:label "actualStartDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:actualStart."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:assignmentFor a owl:ObjectProperty ;
+    rdfs:label "assignmentFor"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    owl:inverseOf sdo:hasAssignment ;
+    iof-av:naturalLanguageDefinition "A relation that links a schedule resource assignment to either a schedule resource or a schedule activity. It identifies the target entity—whether a resource or an activity—to which the assignment applies."@en .
+
+sdo:day a owl:NamedIndividual,
+        sdo:DurationUnit ;
+    rdfs:label "day"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> .
+
+sdo:earlyFinish a owl:ObjectProperty ;
+    rdfs:label "earlyFinish"@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasFinishTime ;
+    skos:example "Welding activity can finish as soon as 15.11.2022."@en ;
+    iof-av:naturalLanguageDefinition "The earliest possible finish point in time when a schedule activity can finish."@en ;
+    iof-av:usageNote "Use this relation to state the earliest possible point in time when the uncompleted portions of the schedule activity can finish based on the schedule. This is normally a result of a scheduling calculation. The calculation of the earliest possible finish is not in scope of this standard."@en .
+
+sdo:earlyFinishDateTime a owl:DatatypeProperty ;
+    rdfs:label "earlyFinishDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:earlyFinish."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:earlyStart a owl:ObjectProperty ;
+    rdfs:label "earlyStart"@en ;
+    rdfs:comment "Use this relation to state the earliest possible point in time when the uncompleted portions of the schedule activity can be started based on the schedule."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasStartTime ;
+    skos:example "Welding activity can commence as soon as 15.10.2022."@en ;
+    iof-av:naturalLanguageDefinition "Earliest point in time when a schedule activity can start."@en ;
+    iof-av:usageNote "Use this relation to state the earliest possible point in time when the uncompleted portions of the schedule activity can start based on the schedule. This is normally a result of a scheduling calculation. The calculation of the earliest possible start is not in scope of this standard."@en .
+
+sdo:earlyStartDateTime a owl:DatatypeProperty ;
+    rdfs:label "earlyStartDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:earlyStart."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:effortOf a owl:ObjectProperty ;
+    rdfs:label "effortOf"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    owl:inverseOf sdo:hasEffort .
+
+sdo:finishNoEarlierThan a owl:ObjectProperty ;
+    rdfs:label "finishNoEarlierThan"@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasFinishTime ;
+    skos:example "Hydrotest has finish no earlier than the end of the 24-hour hold, Quay Refurbishment has finish no earlier than 2025-06-30T17:00:00+01:00."@en ;
+    iof-av:naturalLanguageDefinition "Earliest point in time an activity is to finish."@en .
+
+sdo:finishNoEarlierThanDateTime a owl:DatatypeProperty ;
+    rdfs:label "finishNoEarlierThanDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:finishNoEarlierThan."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:finishNoLaterThan a owl:ObjectProperty ;
+    rdfs:label "finishNoLaterThan"@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasFinishTime ;
+    skos:example "Painting activity is to be finished by 21.08.2024."@en ;
+    iof-av:naturalLanguageDefinition "The latest finish point in time an activity needs to finish."@en ;
+    iof-av:usageNote "Strict and is not overridden by any calculations."@en .
+
+sdo:finishNoLaterThanDateTime a owl:DatatypeProperty ;
+    rdfs:label "finishNoLaterThanDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:finishNoLaterThan."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:freeFloat a owl:ObjectProperty ;
+    rdfs:label "freeFloat"@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:Duration ;
+    skos:example "Cable Trenching has free float of 8 hours before the next vessel task is impacted, Painting of Pipe Rack has free float of 1 day without delaying Touch-Up Inspection."@en ;
+    iof-av:naturalLanguageDefinition "The amount of time (duration) a schedule activity can be delayed without delaying the start of any immediately following schedule activity."@en .
+
+sdo:freeFloatHours a owl:DatatypeProperty ;
+    rdfs:label "freeFloatHours"@en ;
+    rdfs:comment "Shortcut property. See sdo:freeFloat."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal ;
+    iof-av:naturalLanguageDefinition "Amount of time a schedule activity can be delayed without impacting the Early Start of any of its immediate successors in hours."@en .
+
+sdo:freeFloatMinutes a owl:DatatypeProperty ;
+    rdfs:label "freeFloatMinutes"@en ;
+    rdfs:comment "Shortcut property. See sdo:freeFloat."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal ;
+    iof-av:naturalLanguageDefinition "Amount of time a schedule activity can be delayed without impacting the Early Start of any of its immediate successors in minutes."@en .
+
+sdo:hasActualEffort a owl:ObjectProperty ;
+    rdfs:label "hasActualEffort"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:ActualEffortDatum ;
+    rdfs:subPropertyOf sdo:hasEffort ;
+    skos:example "The engineering activity took 600 person hours, Process Control Logic Checkout has actual effort 310 person hours, Coating Repair on Jacket has actual effort 56 person hours."@en ;
+    iof-av:naturalLanguageDefinition "A relation between a schedule or a schedule activity and actual effort."@en ;
+    iof-av:usageNote "Used to describe the amount of work that was used to complete a schedule or schedule activity."@en .
+
+sdo:hasBreakdownStructureElement a owl:ObjectProperty ;
+    rdfs:label "hasBreakdownStructureElement"@en ;
+    rdfs:comment "A schedule can have several breakdown structures"@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Milestone ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:ScheduleBreakdownStructure ;
+    skos:example "Schedule X has WBS breakdown structure."@en ;
+    iof-av:naturalLanguageDefinition "A relation between a schedule activity or milestone and a schedule breakdown structure."@en .
+
+sdo:hasDayOfWeek a owl:ObjectProperty ;
+    rdfs:label "hasDayOfWeek"@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:WeeklyRepeatingWorkPatternException sdo:WeeklyRepeatingWorkPatternAssignment ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:DayOfWeek ;
+    skos:exactMatch time:dayOfWeek .
+
+sdo:hasPlannedDuration a owl:ObjectProperty ;
+    rdfs:label "hasPlannedDuration"@en ;
+    rdfs:comment "The schedule duration can be derived from the schedule activity durations. How this can be calculated is not in scope of SDO."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Schedule ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:PlannedDuration ;
+    skos:broader time:hasDuration ;
+    skos:example "Planned duration of this activity is 2 months."@en,
+        "Planned duration of this schedule is 3 years."@en ;
+    iof-av:naturalLanguageDefinition "A relation between a schedule or schedule activity and a planned duration."@en ;
+    iof-av:usageNote "Measures the planned amount of time that passes between the beginning and ending of a schedule activity or schedule."@en,
+        "The relation specifies the estimated time a schedule or schedule activity is planned to take."@en .
+
+sdo:hasPlannedEffort a owl:ObjectProperty ;
+    rdfs:label "hasPlannedEffort"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:PlannedEffortDatum ;
+    rdfs:subPropertyOf sdo:hasEffort ;
+    skos:example "The engineering activity has an estimated effort of 100 person hours, Structural Framing has planned effort 480 person hours, Pre-Sail Dock Trial has planned effort 90 person hours."@en ;
+    iof-av:naturalLanguageDefinition "A relation between a schedule or a schedule activity and planned effort."@en ;
+    iof-av:usageNote "Used to specify the planned effort, which is the estimated amount of work required to complete a schedule or schedule activity."@en .
+
+sdo:hasPredecessor a owl:ObjectProperty ;
+    rdfs:label "hasPredecessor"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:seeAlso sdo:hasSuccessor ;
+    rdfs:subPropertyOf lis:after ;
+    owl:inverseOf sdo:hasSuccessor ;
+    skos:example "Painting has predecessor Insulation, Start-Up Readiness Review has predecessor Commissioning Walkdown."@en ;
+    iof-av:naturalLanguageDefinition "To relate schedule activities where a schedule activity logically comes before a dependent schedule activity."@en .
+
+sdo:hasRemainingEffort a owl:ObjectProperty ;
+    rdfs:label "hasRemainingEffort"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:RemainingEffortDatum ;
+    rdfs:subPropertyOf sdo:hasEffort ;
+    skos:example "The engineering activity has an estimated remaining effort of 60 person hours, Instrument Loop Check has remaining effort 75 person hours, Cable Laying (final leg) has remaining effort 14 person hours."@en ;
+    iof-av:naturalLanguageDefinition "A relation between a schedule or a schedule activity and remaining effort."@en ;
+    iof-av:usageNote "Used to specify the remaining effort, which is the estimated amount of work still required to complete a schedule or schedule activity."@en .
+
+sdo:hour a owl:NamedIndividual,
+        sdo:DurationUnit ;
+    rdfs:label "hour"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> .
+
+sdo:lag a owl:ObjectProperty ;
+    rdfs:label "lag"@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivityLink sdo:ScheduleResourceAssignment ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:Duration ;
+    skos:example "Activity A is “pouring concrete in wall”, and Activity B is “painting wall”, and that Activity A is linked to B in a “FinishToStart” relationship. However, Activity B cannot start until the concrete has dried, so therefore the lag property can specify this delay. E.g 2 days, FinishToStart (Concrete → Painting) has lag P2D (wait two days for curing), StartToStart (Cable pull → Termination) has lag PT4H (staggered start), assignment “Rope access crew for flare tip inspection” has lag 1 day (weather window)."@en ;
+    iof-av:naturalLanguageDefinition "Property for the duration to delay the start or end of a schedule activity or schedule resource assignment."@en .
+
+sdo:lagHours a owl:DatatypeProperty ;
+    rdfs:label "lagHours"@en ;
+    rdfs:comment "Shortcut property. See sdo:lag."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivityLink sdo:ScheduleResourceAssignment ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal .
+
+sdo:lateFinish a owl:ObjectProperty ;
+    rdfs:label "lateFinish"@en ;
+    rdfs:comment "Constraint set by a person or software. Cannot be guaranteed in practice."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasFinishTime ;
+    skos:example "Welding activity can finish as late as 15.11.2022."@en ;
+    iof-av:naturalLanguageDefinition "Latest finish point in time when a schedule activity can finish."@en .
+
+sdo:lateFinishDateTime a owl:DatatypeProperty ;
+    rdfs:label "lateFinishDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:lateFinish."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:lateStart a owl:ObjectProperty ;
+    rdfs:label "lateStart"@en ;
+    rdfs:comment "Constraint set by a person or the scheduling software. Cannot be guaranteed in practice."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasStartTime ;
+    skos:example "Welding activity can commence as late as 15.10.2022."@en ;
+    iof-av:naturalLanguageDefinition "Latest start point in time when a schedule activity can start."@en .
+
+sdo:lateStartDateTime a owl:DatatypeProperty ;
+    rdfs:label "lateStartDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:lateStart."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:minute a owl:NamedIndividual,
+        sdo:DurationUnit ;
+    rdfs:label "minute"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> .
+
+sdo:mustFinishOn a owl:ObjectProperty ;
+    rdfs:label "mustFinishOn"@en ;
+    rdfs:comment "Constraint set by a person or software. Cannot be guaranteed in practice."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Milestone ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasFinishTime ;
+    skos:example "Welding activity has to finish 15.11.2022."@en ;
+    iof-av:naturalLanguageDefinition "Finish point in time when a schedule activity is to finish."@en ;
+    iof-av:usageNote "Strict and is not overridden by any calculations."@en .
+
+sdo:mustFinishOnDateTime a owl:DatatypeProperty ;
+    rdfs:label "mustFinishOnDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:mustFinishOn."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Milestone ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:mustStartOn a owl:ObjectProperty ;
+    rdfs:label "mustStartOn"@en ;
+    rdfs:comment "Constraint set by a person or software. Cannot be guaranteed in practice."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Milestone ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasStartTime ;
+    skos:example "Welding activity has to commence 15.10.2022."@en ;
+    iof-av:naturalLanguageDefinition "Start point in time when a schedule activity is to start."@en ;
+    iof-av:usageNote "Strict and is not overridden by any calculations."@en .
+
+sdo:mustStartOneDateTime a owl:DatatypeProperty ;
+    rdfs:label "mustStartOnDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:mustStartOn."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Milestone ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:percent a owl:NamedIndividual,
+        sdo:ProgressUnit ;
+    rdfs:label "percent"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> .
+
+sdo:personHour a owl:NamedIndividual,
+        sdo:EffortUnit ;
+    rdfs:label "personHour"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> .
+
+sdo:plannedDurationValue a owl:DatatypeProperty ;
+    rdfs:label "plannedDurationValue"@en ;
+    rdfs:domain sdo:PlannedDuration ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:duration ;
+    skos:broader time:hasXSDDuration ;
+    iof-av:naturalLanguageDefinition "Property to link a value to the planned duration."@en .
+
+sdo:plannedEffortPersonHours a owl:DatatypeProperty ;
+    rdfs:label "plannedEffortPersonHours"@en ;
+    rdfs:comment "Shortcut property."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:effortPersonHours .
+
+sdo:plannedProgressPercent a owl:DatatypeProperty ;
+    rdfs:label "plannedProgressPercent"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:progressPercent ;
+    skos:example "Planned progress for the field X development schedule is 30%."@en,
+        "Planned progress for the painting activity is 60%."@en ;
+    iof-av:naturalLanguageDefinition "Planned measurable work proceeded towards completion."@en ;
+    iof-av:usageNote "Planned progress can be seen as the planned state of a schedule activity."@en .
+
+sdo:previousActivityLink a owl:ObjectProperty ;
+    rdfs:label "previousActivityLink"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    owl:inverseOf sdo:nextActivity ;
+    iof-av:naturalLanguageDefinition "A relation between a schedule activity and a succeeding schedule activity link."@en ;
+    iof-av:usageNote "For annotations, see the inverse relation sdo:nextActivity."@en .
+
+sdo:progressOf a owl:ObjectProperty ;
+    rdfs:label "progressOf"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    owl:inverseOf sdo:hasProgress .
+
+sdo:remainingEffortPersonHours a owl:DatatypeProperty ;
+    rdfs:label "remainingEffortPersonHours"@en ;
+    rdfs:comment "Shortcut property."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:effortPersonHours .
+
+sdo:resourceProfileIn a owl:ObjectProperty ;
+    rdfs:label "resourceProfileIn"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    owl:inverseOf sdo:hasResourceProfile ;
+    iof-av:usageNote "For annotations, see inverse property sdo:hasResourceProfile."@en .
+
+sdo:resourceProfilePointOf a owl:ObjectProperty ;
+    rdfs:label "resourceProfilePointOf"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    owl:inverseOf sdo:hasResourceProfilePoint ;
+    iof-av:usageNote "For annotation properties, see inverse property sdo:hasResourceProfilePoint."@en .
+
+sdo:scheduleOf a owl:ObjectProperty ;
+    rdfs:label "scheduleOf"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    owl:inverseOf sdo:hasSchedule ;
+    iof-av:usageNote "For annotation properties, see inverse property sdo:hasSchedule."@en .
+
+sdo:schedulePartOf a owl:ObjectProperty ;
+    rdfs:label "schedulePartOf"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf lis:partOf ;
+    owl:inverseOf sdo:hasSchedulePart ;
+    iof-av:usageNote "For annotations, see inverse sdo:hasSchedulePart."@en .
+
+sdo:second a owl:NamedIndividual,
+        sdo:DurationUnit ;
+    rdfs:label "second"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> .
+
+sdo:siteOfExecution a owl:ObjectProperty ;
+    rdfs:label "siteOfExecution"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf lis:siteOf ;
+    owl:inverseOf sdo:executedOnSite ;
+    iof-av:usageNote "For annotation properties, see inverse property sdo:executedOnSite."@en .
+
+sdo:startNoEarlierThan a owl:ObjectProperty ;
+    rdfs:label "startNoEarlierThan"@en ;
+    rdfs:comment "Constraint set by a person or software. Cannot be guaranteed in practice."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasStartTime ;
+    iof-av:naturalLanguageDefinition "A fixed point in time for the earliest start date for the schedule activity."@en .
+
+sdo:startNoEarlierThanDateTime a owl:DatatypeProperty ;
+    rdfs:label "startNoEarlierThanDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:startNoEarlierThan."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:startNoLaterThan a owl:ObjectProperty ;
+    rdfs:label "startNoLaterThan"@en ;
+    rdfs:comment "Constraint set by a person or software. Cannot be guaranteed in practice."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf sdo:hasStartTime ;
+    iof-av:naturalLanguageDefinition "A fixed point in time for the latest start date for the activity."@en .
+
+sdo:startNoLaterThanDateTime a owl:DatatypeProperty ;
+    rdfs:label "startNoLaterThanDateTime"@en ;
+    rdfs:comment "Shortcut property. See sdo:startNoLaterThan."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime .
+
+sdo:totalFloat a owl:ObjectProperty ;
+    rdfs:label "totalFloat"@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:Duration ;
+    iof-av:naturalLanguageDefinition "Period of time into which a schedule activity in a schedule can overrun without causing a delay to the completion of the schedule as a whole."@en .
+
+sdo:totalFloatHours a owl:DatatypeProperty ;
+    rdfs:label "totalFloatHours"@en ;
+    rdfs:comment "Shortcut property. See sdo:totalFloat."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal ;
+    skos:note "ILAP uses 'TotalFloatInHours'."@en .
+
+sdo:totalFloatMinutes a owl:DatatypeProperty ;
+    rdfs:label "totalFloatMinutes"@en ;
+    rdfs:comment "Shortcut property. See sdo:totalFloat."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal .
+
+sdo:workPatternElementOf a owl:ObjectProperty ;
+    rdfs:label "workPatternElementOf"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subPropertyOf lis:temporalPartOf ;
+    owl:inverseOf sdo:hasWorkPatternElement ;
+    iof-av:usageNote "For annotations, see the inverse relation sdo:hasWorkPatternElement."@en .
+
+sdo:workPatternOf a owl:ObjectProperty ;
+    rdfs:label "workPatternOf"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    owl:inverseOf sdo:hasWorkPattern ;
+    iof-av:usageNote "For annotations, see the inverse relation sdo:hasWorkPattern."@en .
+
+sdo:workingHoursADay a owl:DatatypeProperty ;
+    rdfs:label "workingHoursADay"@en ;
+    rdfs:comment "Shortcut property."@en ;
+    rdfs:domain sdo:WorkPattern ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal .
+
+sdo:ActualEffort a owl:Class ;
+    rdfs:label "ActualEffort"@en ;
+    rdfs:comment "Often expressed in hours, days or weeks."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:Effort ;
+    skos:example "525 hours were taken to complete designing the pumping system."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "The schedule effort taken to complete a schedule activity."@en ;
+    iof-av:primitiveRationale "Specializes sdo:ScheduleHumanEffort to represent actual labor input. Detailed rules for tracking, validating, or reconciling actual effort with planned effort, as well as constraints on measurement units or reporting standards, are beyond the scope of SDO. The class is introduced as a conceptual refinement to capture actual effort."@en ;
+    iof-av:usageNote "Equals the number of labour units spent on execution of the schedule activity."@en,
+        "Used during and after the execution of the actual schedule activity has taken place."@en,
+        "Usually expressed in hours."@en .
+
+sdo:ActualEffortDatum a owl:Class ;
+    rdfs:label "ActualEffortDatum"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty lis:quantifiesQuality ;
+            owl:someValuesFrom sdo:ActualEffort ],
+        sdo:EffortDatum ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "An effort datum that quantifies the actual effort expended."@en .
+
+sdo:ActualFinishTime a owl:Class ;
+    rdfs:label "ActualFinishTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:FinishTime ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A finish time that marks the observed finish time upon execution."@en ;
+    iof-av:primitiveRationale "Specializes FinishTime conceptually."@en .
+
+sdo:ActualStartTime a owl:Class ;
+    rdfs:label "ActualStartTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:StartTime ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A start time that marks the observed time upon execution."@en ;
+    iof-av:primitiveRationale "Specializes sdo:StartTime conceptually."@en .
+
+sdo:AlwaysOnScheduleActivity a owl:Class ;
+    rdfs:label "AlwaysOnScheduleActivity"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleActivity ;
+    iof-av:naturalLanguageDefinition "A schedule activity that is considered to be on schedule by definition, irrespective of actual timing deviations."@en .
+
+sdo:EarlyFinishActivity a owl:Class ;
+    rdfs:label "EarlyFinishActivity"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleActivity ;
+    owl:disjointWith sdo:LateFinishActivity ;
+    iof-av:naturalLanguageDefinition "A schedule activity that is constrained or intended to finish at the earliest feasible time within the planning horizon."@en .
+
+sdo:EarlyFinishTime a owl:Class ;
+    rdfs:label "EarlyFinishTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:FinishTime ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A finish time that marks the earliest possible finish time."@en ;
+    iof-av:primitiveRationale "Represents a scheduling concept (earliest finish)."@en .
+
+sdo:EarlyStartActivity a owl:Class ;
+    rdfs:label "EarlyStartActivity"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleActivity ;
+    owl:disjointWith sdo:LateStartActivity ;
+    iof-av:naturalLanguageDefinition "A schedule activity that is constrained or intended to commence at the earliest feasible time within the planning horizon."@en .
+
+sdo:EarlyStartTime a owl:Class ;
+    rdfs:label "EarlyStartTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:StartTime ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A start time marking the earliest possible start time based on scheduling logic."@en ;
+    iof-av:primitiveRationale "Represents a scheduling concept (earliest start)."@en .
+
+sdo:FinishNoEarlierThanTime a owl:Class ;
+    rdfs:label "FinishNoEarlierThanTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:FinishTime ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A finish time that marks.."@en ;
+    iof-av:primitiveRationale "Represents a constraint concept; no formal axioms beyond subclassing."@en .
+
+sdo:FinishNoLaterThanTime a owl:Class ;
+    rdfs:label "FinishNoLaterThanTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:FinishTime ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A finish time that marks.."@en ;
+    iof-av:primitiveRationale "Represents a constraint concept."@en .
+
+sdo:LateFinishTime a owl:Class ;
+    rdfs:label "LateFinishTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:FinishTime ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A finish time that marks the latest permissible finish time without delaying the project."@en ;
+    iof-av:primitiveRationale "Represents a scheduling concept (latest finish); no formal OWL restrictions."@en .
+
+sdo:LateStartTime a owl:Class ;
+    rdfs:label "LateStartTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:StartTime ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A start time that marks the latest permissible start time without delaying the project."@en ;
+    iof-av:primitiveRationale "Represents a scheduling concept (latest start)."@en .
+
+sdo:PlannedEffort a owl:Class ;
+    rdfs:label "PlannedEffort"@en ;
+    rdfs:comment "Often expressed in hours, days or weeks. Usually expressed in hours."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:Effort ;
+    skos:example "510 hours are estimated to complete designing the system."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "The schedule effort estimated as required to complete a schedule activity."@en ;
+    iof-av:primitiveRationale "Specializes sdo:ScheduleHumanEffort conceptually to represent planned labor input, but does not introduce formal OWL axioms for planning semantics. Detailed rules for effort estimation, planning methodologies, or constraints on how planned effort relates to actual effort are beyond the scope of SDO. The class is introduced as a conceptual refinement to capture the notion of planned effort."@en ;
+    iof-av:usageNote "Planned effort is an estimated number, not calculated."@en,
+        "Usually expressed in hours."@en .
+
+sdo:PlannedEffortDatum a owl:Class ;
+    rdfs:label "PlannedEffortDatum"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty lis:quantifiesQuality ;
+            owl:someValuesFrom sdo:PlannedEffort ],
+        sdo:EffortDatum ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "An effort datum that quantifies the estimated effort."@en .
+
+sdo:Progress a owl:Class ;
+    rdfs:label "Progress"@en ;
+    rdfs:comment "Supports the representation of progress as a measurable quality, often used in planning, and reporting."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Quality ;
+    skos:example "75% complete, fully completed."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A quality that expresses the degree of completion or advancement."@en ;
+    iof-av:primitiveRationale "Represents a conceptual quality of completion. Detailed rules for calculating progress, defining thresholds, or linking progress to effort and duration are beyond the scope of SDO. The class is introduced as a conceptual specialization of lis:Quality to capture progress as a measurable property."@en ;
+    iof-av:usageNote "Progress is typically quantified using a scalar value and a dimensionless unit such as percent."@en .
+
+sdo:Project a owl:Class ;
+    rdfs:label "Project"@en ;
+    rdfs:comment "A project is typically initiated to produce a unique product, service, or result. Multiple stakeholders, disciplines, and phases can be involved."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Organization ;
+    skos:example "Apollo 11 Mission project, Øresund Bridge Construction Project, Johan Castberg field development project."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "An organization formed for a finite duration to achieve specific goals."@en ;
+    iof-av:primitiveRationale "A comprehensive definition of the semantics of projects, including detailed rules for organizational structure, roles, and lifecycle constraints, is beyond the scope of SDO. The class is introduced as a conceptual specialization of lis:Organization to represent temporary organizational entities established to achieve defined goals."@en ;
+    iof-av:usageNote "Represents a temporary structure established to deliver defined outcomes. Typically operates within constraints of time, resources, and scope. Often in support or part of a broader organizational mission."@en .
+
+sdo:RemainingEffort a owl:Class ;
+    rdfs:label "RemainingEffort"@en ;
+    rdfs:comment "Often expressed in hours, days or weeks. Usually expressed in hours."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:Effort ;
+    skos:example "30 hours are still required to complete designing the system"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "The schedule effort still required to complete a schedule activity."@en ;
+    iof-av:primitiveRationale "Represents estimated remaining effort conceptually. Detailed rules for calculating remaining effort, reconciling it with planned and actual effort, or applying forecasting methods are beyond the scope of SDO. The class is introduced as a conceptual refinement to capture remaining effort as an estimate."@en ;
+    iof-av:usageNote "Remaining effort is estimated, not calculated. Does not equal planned effort - actual effort."@en,
+        "Usually expressed in hours."@en .
+
+sdo:RemainingEffortDatum a owl:Class ;
+    rdfs:label "RemainingEffortDatum"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty lis:quantifiesQuality ;
+            owl:someValuesFrom sdo:RemainingEffort ],
+        sdo:EffortDatum ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "An effort datum that quantifies the effort remaining to complete"@en .
+
+sdo:StartNoEarlierThanTime a owl:Class ;
+    rdfs:label "StartNoEarlierThanTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:StartTime ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "Specifying the earliest allowed start."@en ;
+    iof-av:primitiveRationale "Represents a constraint concept."@en .
+
+sdo:StartNoLaterThanTime a owl:Class ;
+    rdfs:label "StartNoLaterThanTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:StartTime ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "Specifying the latest allowed start."@en ;
+    iof-av:primitiveRationale "Represents a constraint concept."@en .
+
+sdo:WeeklyRepeatingWorkPatternAssignment a owl:Class ;
+    rdfs:label "WeeklyRepeatingWorkPatternAssignment"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:WorkPatternElement ;
+    skos:example "Saturdays and Sundays Monday to Friday, 08:00–16:00, repeating weekly, weekend shifts (Saturday and Sunday, 10:00–18:00) every week, alternating weeks of early (06:00–14:00) and late (14:00–22:00) shifts."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A work pattern element that repeats itself every week."@en ;
+    iof-av:primitiveRationale "Capturing all recurrence patterns is beyond scope."@en .
+
+sdo:WeeklyRepeatingWorkPatternException a owl:Class ;
+    rdfs:label "WeeklyRepeatingWorkPatternException"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:WorkPatternElement ;
+    skos:example "Exclude work on the first Monday of every month, Add overtime every Wednesday from 16:00–18:00, Remove Friday shifts during summer months (June–August)."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A work pattern element that repeats itself every week, but is to be subtracted from the working time."@en ;
+    iof-av:primitiveRationale "A full formalization of exceptions to recurring work patterns would require complex temporal logic and rule-based reasoning (e.g., subtraction from intervals, conditional overrides). This level of detail is beyond the scope of the ontology."@en .
+
+sdo:datumValueDateTime a owl:DatatypeProperty ;
+    rdfs:label "datumValueDateTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:dateTime ;
+    rdfs:subPropertyOf lis:datumValue ;
+    iof-av:naturalLanguageDefinition "A datum value that represents the date and time value associated with a quality datum."@en ;
+    iof-av:usageNote "Use this property when the measured or recorded value is a specific point in time, expressed in the standard date-time format."@en .
+
+sdo:datumValueDuration a owl:DatatypeProperty ;
+    rdfs:label "datumValueDuration"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:duration ;
+    rdfs:subPropertyOf lis:datumValue ;
+    iof-av:naturalLanguageDefinition "A datum value that represents the numeric value associated with a quality datum."@en ;
+    iof-av:usageNote "Use this property when the value represents a duration (e.g., an interval or elapsed time) in standard duration format."@en .
+
+sdo:executedOnSite a owl:ObjectProperty ;
+    rdfs:label "executedOnSite"@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range lis:Site ;
+    rdfs:subPropertyOf lis:occursIn ;
+    skos:example "Welding activity is executed on site A, Hot-tap installation is executed on site Platform A North Module, Mooring line inspection is executed on site Berth-5."@en ;
+    iof-av:naturalLanguageDefinition "A relation to specify the site a schedule activity is executed on."@en .
+
+sdo:hasAssignment a owl:ObjectProperty ;
+    rdfs:label "hasAssignment"@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:ScheduleResource ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:ScheduleResourceAssignment ;
+    skos:example "Excavation has assignment Excavator-A (40 person hours), Compressor Installation has assignment Rigging Crew, Tech Manual “Start-Up V2” has assignment to Commissioning activity."@en ;
+    iof-av:naturalLanguageDefinition "A relation that links either a schedule activity or a schedule resource to a corresponding schedule resource assignment. It represents the relationship where an activity or resource is associated with a specific assignment that defines how the resource is allocated or scheduled."@en .
+
+sdo:hasProgress a owl:ObjectProperty ;
+    rdfs:label "hasProgress"@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Schedule ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:ProgressDatum ;
+    skos:example "Engineering Activity has progress 65% (as of 2025-11-30), FPSO Hook-up has progress 0.35 (actual), Quay Load Test has progress 100% (completed)."@en ;
+    iof-av:naturalLanguageDefinition "A relation between a schedule or a schedule activity and a progress datum. The relation specifies the degree of completion (e.g., percentage complete or equivalent milestone-based measure) for a schedule or schedule activity, at a given status date and according to a stated basis (planned, baseline, or actual)."@en .
+
+sdo:hasResourceProfile a owl:ObjectProperty ;
+    rdfs:label "hasResourceProfile"@en ;
+    rdfs:domain sdo:ScheduleResourceAssignment ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:ResourceProfile ;
+    skos:example "Assignment “Welders to Spool Fabrication” has resource profile Front-loaded, Assignment “Crane-01 for Lift” has resource profile Triangular."@en ;
+    iof-av:naturalLanguageDefinition "A relationship that connects a Resource Profile to the Schedule Resource Assignment it belongs to. It indicates that the profile describes how the work assigned to a resource is distributed over time within a specific assignment."@en .
+
+sdo:hasResourceProfilePoint a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "hasResourceProfilePoint"@en ;
+    rdfs:domain sdo:ResourceProfile ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:ResourceProfilePoint ;
+    skos:example "Profile “Back-loaded” has resource profile point (time%: 80, progress%: 60), Profile “Triangular” has resource profile point (time%: 50, progress%: 100)."@en .
+
+sdo:hasSchedule a owl:ObjectProperty ;
+    rdfs:label "hasSchedule"@en ;
+    rdfs:domain sdo:Project ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:Schedule ;
+    skos:example "Field X Development Project has schedule “Phase 2 Drilling & Completions”, Port Expansion Programme has schedule “Berth‑5 Upgrade Q3–Q4."@en ;
+    iof-av:naturalLanguageDefinition "A relation between a project and a schedule."@en .
+
+sdo:hasSchedulePart a owl:ObjectProperty ;
+    rdfs:label "hasSchedulePart"@en ;
+    rdfs:domain sdo:Schedule ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Milestone ) ] ;
+    rdfs:subPropertyOf lis:hasPart ;
+    skos:example "Turnaround Schedule 2026 has schedule part “Steam Out Unit-12”, Tow-Out Schedule has schedule part Milestone “Sail Permit Granted”, Civil Works Schedule has schedule part “Pile Driving Area B”."@en ;
+    iof-av:naturalLanguageDefinition "For relation between a schedule and its schedule activity or milestone as part."@en .
+
+sdo:hasWorkPattern a owl:ObjectProperty ;
+    rdfs:label "hasWorkPattern"@en ;
+    rdfs:comment "Treated as an attribute for schedule activities, link, resource."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Schedule sdo:ScheduleActivityLink sdo:ScheduleResource sdo:ScheduleResourceAssignment ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:WorkPattern ;
+    skos:example "Insulation Activity has work pattern “7.5 h/day, Mon-Fri, Jun-Jul”, Schedule Activity Link (Concrete → Formwork Strike) has work pattern “No weekend work”, Rigging Crew Resource has work pattern “12-hour shifts, rotating”."@en ;
+    iof-av:usageNote "Specifies when a schedule activity, schedule activity link, schedule resource or resource assignment can take place."@en .
+
+sdo:hasWorkPatternElement a owl:ObjectProperty ;
+    rdfs:label "hasWorkPatternElement"@en ;
+    rdfs:comment "A work pattern can consist of one or several work pattern elements."@en ;
+    rdfs:domain sdo:WorkPattern ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:WorkPatternElement ;
+    rdfs:subPropertyOf lis:hasTemporalPart ;
+    skos:example "Non-working time every Sunday, Work pattern “Night Shift” has work pattern element 22:00-06:00 on weekdays, Work pattern “Turnaround Core Crew” has work pattern element Non-working time every Sunday."@en ;
+    iof-av:naturalLanguageDefinition "A relation between a work pattern and work pattern element."@en .
+
+sdo:nextActivityLink a owl:ObjectProperty ;
+    rdfs:label "nextActivityLink"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    owl:inverseOf sdo:previousActivity ;
+    skos:example "Hydrotest next activity link is “Hydrotest → Drying (FS, lag P1D)” (oil & gas), Pile Driving Area B next activity link is “Pile Driving → Cap Installation (FS)”."@en ;
+    iof-av:naturalLanguageDefinition "A relation between a schedule activity and a schedule activity link."@en .
+
+sdo:previousActivity a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "previousActivity"@en ;
+    rdfs:domain sdo:ScheduleActivityLink ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:ScheduleActivity ;
+    iof-av:naturalLanguageDefinition "A relation between a schedule activity link and a preceding schedule activity."@en .
+
+sdo:resourceProfileXCoord a owl:DatatypeProperty ;
+    rdfs:label "resourceProfileXCoord"@en ;
+    rdfs:domain sdo:ResourceProfilePoint ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal ;
+    iof-av:naturalLanguageDefinition "RecourceProfilePoint -> decimal"@en .
+
+sdo:resourceProfileYCoord a owl:DatatypeProperty ;
+    rdfs:label "resourceProfileYCoord"@en ;
+    rdfs:domain sdo:ResourceProfilePoint ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal ;
+    iof-av:naturalLanguageDefinition "RecourceProfilePoint -> decimal"@en .
+
+sdo:EffortUnit a owl:Class ;
+    rdfs:label "EffortUnit"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom sdo:EffortDatum ;
+            owl:onProperty [ owl:inverseOf lis:datumUOM ] ],
+        lis:UnitOfMeasure ;
+    skos:example "person hour"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A unit of measure that, when paired with a number, describes the amount of effort."@en ;
+    iof-av:primitiveRationale "A comprehensive definition of the notion of effort unit is beyond the scope of SDO; the class is treated as a basic building block."@en .
+
+sdo:LateFinishActivity a owl:Class ;
+    rdfs:label "LateFinishActivity"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleActivity ;
+    iof-av:naturalLanguageDefinition "A schedule activity that is constrained or intended to finish at the latest permissible time without violating dependencies or deadlines."@en .
+
+sdo:LateStartActivity a owl:Class ;
+    rdfs:label "LateStartActivity"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:ScheduleActivity ;
+    iof-av:naturalLanguageDefinition "A schedule activity that is constrained or intended to commence at the latest permissible time without violating dependencies or deadlines."@en .
+
+sdo:PlannedDuration a owl:Class ;
+    rdfs:label "Planned duration"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf sdo:Duration ;
+    skos:example "8 hours (planned workday), 3 days (scheduled task duration)"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A duration that represents the planned temporal extent for the execution of a scheduled activity."@en ;
+    iof-av:primitiveRationale "Specializes sdo:Duration conceptually to represent planned temporal extent. Detailed rules for scheduling logic, constraints on planned versus actual duration, or methods for calculating planned time are beyond the scope of SDO. The class is introduced as a conceptual refinement to capture intended duration."@en ;
+    iof-av:usageNote "Use this to express intended durations defined during scheduling or planning."@en .
+
+sdo:ProgressDatum a owl:Class ;
+    rdfs:label "ProgressDatum"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty lis:quantifiesQuality ;
+            owl:someValuesFrom sdo:Progress ],
+        [ a owl:Restriction ;
+            owl:onProperty lis:datumUOM ;
+            owl:someValuesFrom sdo:ProgressUnit ],
+        [ a owl:Restriction ;
+            owl:onProperty sdo:datumValueDecimal ;
+            owl:someValuesFrom xsd:decimal ],
+        lis:QualityDatum .
+
+sdo:ProgressUnit a owl:Class ;
+    rdfs:label "ProgressUnit"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom sdo:ProgressDatum ;
+            owl:onProperty [ owl:inverseOf lis:datumUOM ] ],
+        lis:UnitOfMeasure ;
+    skos:example "percent"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A unit of measure that, when paired with a number, describes the degree of progress or completion in a dimensionless form."@en ;
+    iof-av:primitiveRationale "A comprehensive definition of the notion of progress unit is beyond the scope of SDO."@en ;
+    iof-av:usageNote "Use sdo:ProgressUnit when expressing progress, completion, or proportional values, such as 75% complete."@en .
+
+sdo:ResourceProfile a owl:Class ;
+    rdfs:label "ResourceProfile"@en ;
+    rdfs:comment "Profiles are used to model non-uniform effort or resource usage, such as front-loading or back-loading. The shape of the profile influences planning, forecasting, and progress tracking."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:InformationObject ;
+    skos:example "Back-loaded (most work occurs near the end of the activity), front-loaded (most work occurs at the beginning), trapezoidal (work ramps up, remains steady, then ramps down), triangular (work increases to a peak and then decreases symmetrically)"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "An information object that captures information about a profile to control how the work for a resource assignment is distributed over time."@en ;
+    iof-av:primitiveRationale "The semantics of resource usage profiles, including detailed modeling of effort distribution patterns or constraints on profile shapes, is beyond the scope of SDO. The class is introduced as an information object to represent non-uniform resource allocation over time."@en ;
+    iof-av:usageNote "The profile defines the expected distribution of effort across the duration of a schedule activity. The x-axis represents planned time percentage (time%), and the y-axis represents planned progress percentage (progress%). If no profile is specified, the distribution is assumed to be linear."@en .
+
+sdo:hasSuccessor a owl:ObjectProperty ;
+    rdfs:label "hasSuccessor"@en ;
+    rdfs:comment "A successor activity is not to start until a preceding task (the predecessor) has been completed."@en ;
+    rdfs:domain sdo:ScheduleActivity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:ScheduleActivity ;
+    rdfs:subPropertyOf lis:before ;
+    owl:propertyChainAxiom ( sdo:nextActivityLink sdo:nextActivity ) ;
+    skos:example "Insulation has successor Painting, Sea-fastening has successor Tow-out."@en ;
+    iof-av:naturalLanguageDefinition "To relate schedule activities where a schedule activity logically comes after another schedule activity."@en .
+
+sdo:nextActivity a owl:ObjectProperty ;
+    rdfs:label "nextActivity"@en ;
+    rdfs:domain sdo:ScheduleActivityLink ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:ScheduleActivity ;
+    skos:example "Link “Hydrotest → Drying” next activity is Drying, Link “Sea-fastening → Tow-out” next activity is Tow-out."@en ;
+    iof-av:naturalLanguageDefinition "Identifies the schedule activity that is the successor in the dependency represented by an activity link."@en .
+
+sdo:progressPercent a owl:DatatypeProperty ;
+    rdfs:label "progressPercent"@en ;
+    rdfs:comment "Shortcut property. See sdo:progress."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Schedule ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal .
+
+sdo:DateTimeDatum a owl:Class ;
+    rdfs:label "TimeDatum"@en ;
+    rdfs:comment "This class supports timestamp-based representations of time-related qualities."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty sdo:datumValueDateTime ;
+            owl:someValuesFrom xsd:dateTime ],
+        lis:QualityDatum ;
+    skos:example "2025-10-29T08:00:00Z, 2024-01-01T12:30:00+01:00"@en ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "A quality datum that quantifies a time-related quality using a calendar date and time."@en ;
+    iof-av:usageNote "Use to represent specific points in time."@en .
+
+sdo:DurationDatum a owl:Class ;
+    rdfs:label "DurationDatum"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty lis:quantifiesQuality ;
+            owl:someValuesFrom sdo:Duration ],
+        [ a owl:Restriction ;
+            owl:onProperty lis:datumValue ;
+            owl:someValuesFrom rdfs:Literal ],
+        lis:QualityDatum ;
+    skos:example "“PT2H” (ISO 8601-1:2019 duration), 3 hours, 1.5 days"@en ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "A quality datum that quantifies duration."@en ;
+    iof-av:usageNote "Duration data may be expressed using standardized formats (e.g., ISO 8601) or scalar values with units."@en .
+
+sdo:ResourceProfilePoint a owl:Class ;
+    rdfs:label "ResourceProfilePoint"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Class ;
+            owl:intersectionOf ( [ a owl:Restriction ;
+                        owl:cardinality 1 ;
+                        owl:onProperty sdo:resourceProfileXCoord ] [ a owl:Restriction ;
+                        owl:cardinality 1 ;
+                        owl:onProperty sdo:resourceProfileYCoord ] ) ],
+        lis:InformationObject ;
+    skos:example "A front loaded progress profile consists of the resource profile points 60% progress after 20% of the time, 80% progress after 50% of the time and 100% after 100% of the time."@en ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "An information object that captures information about a coordinate in the time% vs ScheduleEffort% diagram that defines a Resource profile."@en ;
+    iof-av:usageNote "Linear progress is assumed if no resource profile point is specified."@en .
+
+sdo:WorkPattern a owl:Class ;
+    rdfs:label "WorkPattern"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:IntervalRegion ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "An interval region for a pattern of working days and hours."@en ;
+    iof-av:primitiveRationale "A complete formalization of calendars and work availability patterns would require detailed temporal logic and cultural conventions, which is beyond the scope of this ontology."@en ;
+    iof-av:usageNote "Can be referred to as calendar."@en,
+        "Used for, e.g., schedule activities and resources. Says something about the availability of a resource during the execution of a planned schedule activity."@en .
+
+sdo:datumValueDecimal a owl:DatatypeProperty ;
+    rdfs:label "datumValueDecimal"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal ;
+    rdfs:subPropertyOf lis:datumValue ;
+    iof-av:naturalLanguageDefinition "A datum value that represents the numeric value associated with a quality datum."@en ;
+    iof-av:usageNote "Use this property when the measured or recorded value is a decimal number, expressed in a standard numeric format."@en .
+
+sdo:effortPersonHours a owl:DatatypeProperty ;
+    rdfs:label "effortPersonHours"@en ;
+    rdfs:comment "Used as a convenience instead of linking through an EffortDatum individual. Equivalent to specifying effort quantity with unit 'person-hour'."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Schedule ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range xsd:decimal ;
+    skos:example "Engineering Activity has effortPersonHours = 500. FPSO Hook-up has effortPersonHours = 2400."@en ;
+    iof-av:naturalLanguageDefinition "A shortcut property that associates a schedule or schedule activity directly with a decimal value representing the amount of human effort in person-hours."@en .
+
+sdo:Effort a owl:Class ;
+    rdfs:label "Effort"@en ;
+    rdfs:comment "Often expressed in hours, days, or weeks. Usually quantified in hours. Has conceptual similarities with effort estimation methods such as story points."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Quality ;
+    skos:example "500 hours are required to complete designing a system, 1000 hours are required to build the scaffold."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A dependent entity that holds the number of labour units taken, estimated as required or remaining, to complete a schedule activity."@en ;
+    iof-av:primitiveRationale "Represents a conceptual quality of labor input without formal OWL axioms specifying necessary and sufficient conditions. The semantics of effort—such as detailed rules for estimation, aggregation, or constraints on measurement units—is beyond the scope of SDO. The class is introduced as a conceptual specialization of lis:Quality to capture labor effort as a quality associated with schedule activities."@en ;
+    iof-av:usageNote "This class represents labour input as a quantified measure, not the time span over which the work occurs (the duration)."@en .
+
+sdo:hasEffort a owl:ObjectProperty ;
+    rdfs:label "hasEffort"@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( sdo:ScheduleActivity sdo:Schedule ) ] ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range sdo:EffortDatum ;
+    skos:example "The engineering activity requires an effort of 500 person hours, FPSO Hook-up has effort 2,400 person hours (planned), Quay Load Test has effort 120 person hours (actual)."@en ;
+    iof-av:naturalLanguageDefinition "A relation between a schedule or a schedule activity and schedule human effort. The relation specifies the amount of work required to complete a schedule or schedule activity."@en .
+
+sdo:Duration a owl:Class ;
+    rdfs:label "Duration"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:seeAlso time:Duration ;
+    rdfs:subClassOf lis:Quality ;
+    skos:exactMatch time:Duration ;
+    skos:example "2.5 hours, 1 day, 45 minutes"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A dependent entity that represents the duration of a temporal extent"@en ;
+    iof-av:primitiveRationale "Represents a conceptual quality equivalent to time:Duration; necessary and sufficient conditions for dependence are beyond the scope."@en ;
+    iof-av:usageNote "Duration is typically quantified using a scalar value and a unit of time, and may be used to describe the length of schedule activities"@en .
+
+sdo:DurationUnit a owl:Class ;
+    rdfs:label "DurationUnit"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom sdo:DurationDatum ;
+            owl:onProperty [ owl:inverseOf lis:datumUOM ] ],
+        lis:UnitOfMeasure ;
+    skos:example "day, hour, minute, second"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A unit of measure that, when paired with a number, describes the duration of a temporal quantity."@en ;
+    iof-av:primitiveRationale "Determining what qualifies as a unit of measure is beyond the scope of SDO; this class is treated as a basic building block."@en .
+
+sdo:EffortDatum a owl:Class ;
+    rdfs:label "EffortDatum"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty lis:quantifiesQuality ;
+            owl:someValuesFrom sdo:Effort ],
+        [ a owl:Restriction ;
+            owl:onProperty lis:datumUOM ;
+            owl:someValuesFrom sdo:EffortUnit ],
+        [ a owl:Restriction ;
+            owl:onProperty sdo:datumValueDecimal ;
+            owl:someValuesFrom xsd:decimal ],
+        lis:QualityDatum ;
+    skos:example "100 person hours"@en ;
+    iof-av:isPrimitive false ;
+    iof-av:naturalLanguageDefinition "A quality datum that quantifies effort using a numeric value and a unit of measure."@en .
+
+sdo:ScheduleResourceAssignment a owl:Class ;
+    rdfs:label "ScheduleResourceAssignment"@en ;
+    rdfs:comment "Schedule activity, schedule resource and link can have work pattern."@en,
+        "The resource can have a different work pattern than the schedule activity."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:InformationObject ;
+    skos:example "Electrician to Wiring Installation, Excavator to Site Excavation, Technical Manual to System Configuration"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "An information object that specifies the resource needed (and effort) to perform the scheduled activity."@en ;
+    iof-av:primitiveRationale "Defined conceptually as a dependency relationship between a schedule activity and the resource assigned to it. Detailed rules for assignment constraints, resource leveling, or optimization logic are beyond the scope of SDO. The class is introduced as a conceptual specialization of lis:Dependent to represent resource-to-activity assignments."@en .
+
+sdo:StartTime a owl:Class ;
+    rdfs:label "StartTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Instant ;
+    owl:disjointWith sdo:FinishTime ;
+    skos:example "Concrete pour starts at 2025-11-01T08:00:00Z, sail permit review begins at 2025-02-14T13:00:00Z."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A time instant that marks the beginning of a schedule activity."@en ;
+    iof-av:primitiveRationale "Represents a conceptual time instant marking the start of an activity."@en ;
+    iof-av:usageNote "Used to represent time-related qualities that mark an instant or interval on a specified time scale."@en .
+
+sdo:WorkPatternElement a owl:Class ;
+    rdfs:label "WorkPatternElement"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:IntervalRegion ;
+    skos:example "A block of time during which an employee is expected to perform their job duties."@en,
+        "A full day where no work is scheduled, such as weekends or public holidays."@en,
+        "A scheduled pause within the workday for rest or meals."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "An interval that describes the parts of a work pattern."@en ;
+    iof-av:primitiveRationale "The ontology does not attempt to fully axiomatize all possible subdivisions of work patterns."@en .
+
+sdo:FinishTime a owl:Class ;
+    rdfs:label "FinishTime"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Instant ;
+    skos:example "2025-10-29T08:00:00Z"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A time instant that marks the end of a schedule activity."@en ;
+    iof-av:primitiveRationale "Represents a conceptual time instant marking the end of an activity."@en .
+
+sdo:ScheduleResource a owl:Class ;
+    rdfs:label "ScheduleResource"@en ;
+    rdfs:comment "A schedule resource is the necessary input means to execute a schedule activity. Does not represent the physical resource itself, but the resource specification within the context of a schedule."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Object ;
+    skos:example "A Structural Engineer, Concrete, a Tower Crane"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "An object that defines the resource need for a schedule activity."@en ;
+    iof-av:primitiveRationale "Represents a conceptual resource specification. A precise account of what counts as an sdo:ScheduleResource is beyond the scope of SDO."@en ;
+    iof-av:usageNote "Any type of resource (people, material, tools or equipment, in a broad sense) needed to support a schedule activity's execution."@en .
+
+sdo:hasFinishTime a owl:ObjectProperty ;
+    rdfs:label "hasFinishTime"@en ;
+    rdfs:domain lis:Activity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range lis:Instant ;
+    skos:exactMatch time:hasEnd ;
+    iof-av:naturalLanguageDefinition "A relation that links a time interval to a finish point in time. It identifies the specific moment at which the time interval ends, marking the conclusion of the temporal span represented by the interval."@en .
+
+sdo:hasStartTime a owl:ObjectProperty ;
+    rdfs:label "hasStartTime"@en ;
+    rdfs:domain lis:Activity ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:range lis:Instant ;
+    skos:exactMatch time:hasBeginning ;
+    iof-av:naturalLanguageDefinition "A relation that links a time interval to a start point in time. It specifies the exact moment at which the time interval begins."@en .
+
+sdo:DayOfWeek a owl:Class ;
+    rdfs:label "Day of week"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:seeAlso time:DayOfWeek ;
+    rdfs:subClassOf lis:InformationObject ;
+    skos:exactMatch time:DayOfWeek ;
+    skos:example "Monday, Friday"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A time quality that identifies a specific day within a seven-day week."@en ;
+    iof-av:primitiveRationale "Equivalent to time:DayOfWeek, but this class is treated as a conceptual specialization."@en .
+
+sdo:Milestone a owl:Class ;
+    rdfs:label "Milestone"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Event ;
+    skos:example "Project kick-off, final review, welding completed."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "Event that is significant."@en ;
+    iof-av:primitiveRationale "A full axiomatization of what makes an event significant in all scheduling contexts is beyond scope. Significance depends on project-specific semantics that cannot be captured universally."@en ;
+    iof-av:usageNote "A milestone has no duration and does not have resources assigned."@en .
+
+sdo:ScheduleBreakdownStructure a owl:Class ;
+    rdfs:label "ScheduleBreakdownStructure"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:InformationObject ;
+    skos:example "Work breakdown structure WBS, Cost breakdown structure CBS, Organizational breakdown structure OBS, Product breakdown structure PBS"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "A hierarchical decomposition of something into smaller, more manageable components."@en ;
+    iof-av:primitiveRationale "The semantics of breakdown structures, including detailed rules for decomposition or constraints on hierarchy levels, is beyond the scope of SDO. The class is introduced as a conceptual representation of hierarchical decomposition for scheduling purposes."@en .
+
+sdo:ScheduleActivityLink a owl:Class ;
+    rdfs:label "ScheduleActivityLink"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:InformationObject ;
+    skos:example "Framing cannot begin until the foundation is completed. Levelling can start 2 hours after pouring begins, allowing the concrete to partially set. Complete electrical wiring and Complete wall insulation are to finish at the same time."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "An information object to specify the relationship between two schedule activities in a schedule, defining the sequence and dependency relationships among them. These links determine the order in which schedule activities are to be performed."@en ;
+    iof-av:primitiveRationale "Defined conceptually as a dependency relationship between schedule activities. Detailed semantics of link types (e.g., Finish-to-Start, Start-to-Finish), constraints on allowable patterns, or rules for lag and lead times are beyond the scope of SDO. The class is introduced as a conceptual specialization of lis:Dependent to represent activity links without committing to formal scheduling algorithms or dependency constraints."@en ;
+    iof-av:usageNote "To specify dependencies between schedule activities, choosing from the full spectrum of schedule activity link types with FinishToFinish, StartToStart, StartToFinish and FinishToStart. Needed as an object to be able to capture required delays on links (see lag), and e.g. specify separate work patterns for various schedule activity links."@en .
+
+sdo:Schedule a owl:Class ;
+    rdfs:label "Schedule"@en ;
+    rdfs:comment "A schedule can be presented as a milestone chart, Gantt or other bar chart, or tabular listing of dates."@en,
+        "A schedule can relate to a project or programme."@en,
+        "Includes all data in a schedule, but does not refer to any report or diagram."@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:InformationObject ;
+    skos:example "A production schedule, a shipping schedule, a product development schedule"@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "An information object that captures information about a time-sequenced plan of schedule activities"@en ;
+    iof-av:primitiveRationale "The class is defined conceptually as an information object without formal axioms specifying necessary and sufficient conditions. A precise account of what counts as an sdo:Schedule is beyond the scope of SDO."@en ;
+    iof-av:usageNote "A schedule is used to plan, organize, and monitor the sequence and timing of schedule activities."@en,
+        "A schedule is used to specify and track the direction and coordination of the execution and completion of schedule activities."@en .
+
+sdo:ScheduleActivity a owl:Class ;
+    rdfs:label "ScheduleActivity"@en ;
+    rdfs:isDefinedBy <https://posccaesar.org/ontology/sdo/ont/core> ;
+    rdfs:subClassOf lis:Activity ;
+    skos:example "Lifting activity for lifting living quarter module in place, designing the pumping system on an FPSO, building of scaffold."@en ;
+    iof-av:isPrimitive true ;
+    iof-av:naturalLanguageDefinition "An activity that identifies a piece of work that is required to be undertaken to complete a schedule activity."@en ;
+    iof-av:primitiveRationale "A comprehensive account of all possible schedule activities and their constraints is beyond the scope of this ontology. Schedule activities can vary widely in nature, complexity, and temporal structure."@en .
+
+<https://posccaesar.org/ontology/sdo/ont/core> a owl:Ontology ;
+    rdfs:label "Schedule Data Ontology"@en,
+        "Tidsplan Data Ontologi"@no ;
+    dc:creator "ILAP" ;
+    dc:date "2024-12-19"^^xsd:date ;
+    dcterms:contributor "Dirk Walther",
+        "Erik Danielsen",
+        "Lillian Hella",
+        "Mihaly Fekete" ;
+    dcterms:description "An ontology providing a structured vocabulary for modeling schedules."@en,
+        "En ontologi som gir et strukturert vokabular for modellering av tidsplaner."@no ;
+    dcterms:license <https://creativecommons.org/licenses/by-sa/4.0/> ;
+    dcterms:modified "2025-12-16"^^xsd:date ;
+    dcterms:publisher "POSC Caesar Association" ;
+    owl:imports <http://rds.posccaesar.org/ontology/lis14/ont/core> ;
+    owl:versionIRI <https://posccaesar.org/ontology/sdo/ont/core/1.0> ;
+    owl:versionInfo "1.0" .
+
