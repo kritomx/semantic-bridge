@@ -9,6 +9,6 @@ wheels/
 # Virtual environments
 .venv
 
-* data_models/
+data_models/
 
 
