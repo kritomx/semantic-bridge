@@ -10,24 +10,23 @@ and finds conceptual matches based on meaning.
 
 from importlib import import_module
 from sentence_transformers import SentenceTransformer, util
+import re
 
 THRESHOLD_SEMANTIC = 0.75   # cosine similarity — tune this
 MODEL_NAME = "all-MiniLM-L6-v2"
 
 
 def _make_text(name: str, node: dict) -> str:
-    """
-    Combine name + description into a single string for embedding.
-    The richer the text, the better the match quality.
-    """
-    parts = [name]
+    # break camelCase into separate words before embedding
+    # WorkPattern → "Work Pattern", earlyStart → "early Start"
+    readable_name = re.sub(r'(?<=[a-z])(?=[A-Z])', ' ', name)
 
-    # GraphQL field description
+    parts = [readable_name]
+
     desc = node.get("description", "")
     if desc:
         parts.append(desc)
 
-    # SDO natural language definition
     defn = node.get("definition", "")
     if defn:
         parts.append(defn)
