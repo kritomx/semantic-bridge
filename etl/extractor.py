@@ -167,6 +167,11 @@ def _short(uri) -> str:
 
 def _parse_rdf_list(g: Graph, node) -> list:
     """Walk an rdf:List and return its members."""
+    # RDF has no native list type. Instead it encodes a list as a linked chain of nodes,
+    # where each node has two pointers:
+    # rdf:first — the current item
+    # rdf:rest — the next node in the chain
+    # The chain ends with a special terminator value called rdf:nil.
     items = []
     while node and node != RDF.nil:
         first = g.value(node, RDF.first)
@@ -181,6 +186,8 @@ def _resolve_domain(g: Graph, prop: URIRef) -> list:
     Return domain class names as a list.
     Handles both simple URI domains and owl:unionOf BNode domains.
     """
+    #one call to _resolve_domain ends up connecting the property
+    # to every class it belongs to
     domain_node = g.value(prop, RDFS.domain)
     if domain_node is None:
         return []
@@ -198,6 +205,7 @@ def _resolve_range(g: Graph, prop: URIRef) -> list:
     Return range class names as a list.
     Handles both simple URI ranges and owl:unionOf BNode ranges.
     """
+    # same as domain but for range — connects the property to every class/type it can point to
     range_node = g.value(prop, RDFS.range)
     if range_node is None:
         return []
@@ -219,6 +227,7 @@ def _resolve_subclass_of(g: Graph, cls: URIRef) -> list:
         if isinstance(sc, URIRef):       # named class — keep it
             parents.append(_short(sc))
         # BNode = owl:Restriction (e.g. someValuesFrom) — skip
+    #print(f"Class {_short(cls)} subclass_of: {parents}")
     return parents
 
 
