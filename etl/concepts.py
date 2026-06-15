@@ -283,6 +283,7 @@ def get_attributes(subgraph: dict) -> dict:
 if __name__ == "__main__":
     import sys
     import os
+    import pathlib
 
     # allow passing seeds and file paths as CLI args
     # usage: python concepts.py [seed1 seed2 ...] [-- gql_path ttl_path]
@@ -297,8 +298,8 @@ if __name__ == "__main__":
         seeds = args if args else ["Activity", "Schedule", "Project", "Data"]
         paths = []
 
-    gql_path = paths[0] if len(paths) > 0 else "/mnt/user-data/uploads/ilap_graphql_schema.graphql"
-    ttl_path = paths[1] if len(paths) > 1 else "/mnt/user-data/uploads/sdo.ttl"
+    gql_path = paths[0] if len(paths) > 0 else str(pathlib.Path(__file__).parent.parent / "data_models" / "ilap_graphql_schema.graphql")
+    ttl_path = paths[1] if len(paths) > 1 else str(pathlib.Path(__file__).parent.parent / "data_models" / "sdo.ttl")
 
     # import here so the file can also be imported without running the CLI block
     import importlib.util, pathlib

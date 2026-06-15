@@ -347,17 +347,17 @@ if __name__ == "__main__":
 
     # print("Parsing SDO TTL ontology...")
     sdo_index = parse_sdo(ttl_path)
-    pprint(sdo_index["ContinuousWorkPatternAssignment"])
+    #pprint(sdo_index["ContinuousWorkPatternAssignment"])
     # summary by kind
     from collections import Counter
     gql_kinds = Counter(v["kind"] for v in graphql_index.values())
     sdo_kinds = Counter(v["kind"] for v in sdo_index.values())
   
-    # print(f"\n{'─'*50}")
-    # print(f"GraphQL index  — {len(graphql_index)} entries")
-    # for k, n in sorted(gql_kinds.items()):
-    #     print(f"  {k:<22} {n}")
-   # pprint(graphql_index["Schedule"])
+    print(f"\n{'─'*50}")
+    print(f"GraphQL index  — {len(graphql_index)} entries")
+    for k, n in sorted(gql_kinds.items()):
+        print(f"  {k:<22} {n}")
+    #pprint(graphql_index["Schedule"])
     
     print(f"\nSDO index      — {len(sdo_index)} entries")
     for k, n in sorted(sdo_kinds.items()):
